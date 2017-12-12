@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\GeoCoder\GeoCoderInterface;
 use App\Services\IssLocator\IssLocatorInterface;
-use Illuminate\Http\Response;
+use App\Services\Transformers\AbstractTransformer;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class LocateIssController
@@ -17,14 +19,26 @@ class LocateIssController extends Controller
      * @var IssLocatorInterface
      */
     private $issLocator;
+    /**
+     * @var GeoCoderInterface
+     */
+    private $geoCoder;
+    /**
+     * @var AbstractTransformer
+     */
+    private $transformer;
 
     /**
      * LocateIssController constructor.
      * @param IssLocatorInterface $issLocator
+     * @param GeoCoderInterface $geoCoder
+     * @param AbstractTransformer $transformer
      */
-    public function __construct(IssLocatorInterface $issLocator)
+    public function __construct(IssLocatorInterface $issLocator, GeoCoderInterface $geoCoder, AbstractTransformer $transformer)
     {
         $this->issLocator = $issLocator;
+        $this->geoCoder = $geoCoder;
+        $this->transformer = $transformer;
     }
 
     /**
@@ -38,6 +52,11 @@ class LocateIssController extends Controller
      */
     public function __invoke(int $sateliteId = self::DEFAULT_SATELLITE_ID)
     {
-        return new Response($this->issLocator->locate($sateliteId)->get());
+        $data = $this->issLocator->locate($sateliteId)->get();
+
+        return view('iss', $this->transformer->setData([
+            'coordinates'   => $data,
+            'address'      => $this->geoCoder->getGeoCode($data['latitude'], $data['longitude'])->get(),
+        ])->transform());
     }
 }

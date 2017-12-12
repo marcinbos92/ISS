@@ -7,7 +7,11 @@ namespace App\Services\IssLocator;
 
 use App\Services\IssLocator\Exceptions\DefinedLocatorPath;
 use App\Services\IssLocator\Exceptions\NotDefinedLocatorPath;
+use App\Services\IssLocator\Response\IssErrorResponse;
+use App\Services\IssLocator\Response\IssResponse;
+use App\Services\Response\ServiceResponseInteface;
 use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * Class IssLocator
@@ -38,16 +42,16 @@ class IssLocator implements IssLocatorInterface
 
     /**
      * @param int $satelliteId
-     * @return IssResponseInteface
+     * @return ServiceResponseInteface
      */
-    public function locate(int $satelliteId): IssResponseInteface
+    public function locate(int $satelliteId): ServiceResponseInteface
     {
         try {
             return new IssResponse(
                 $this->client->request('GET', $this->path . '/' . $satelliteId)
             );
-        } catch (NotDefinedLocatorPath $exception) {
-            printf("Message: %s", $exception->getMessage());
+        } catch (NotDefinedLocatorPath | RequestException $exception) {
+            return new IssErrorResponse($exception->getMessage(), $exception->getCode());
         }
     }
 
@@ -71,7 +75,7 @@ class IssLocator implements IssLocatorInterface
     public function getPath(): string
     {
         if (null === $this->path) {
-            throw new NotDefinedLocatorPath('Firts you have to set path variable');
+            throw new NotDefinedLocatorPath('You have to set path variable first');
         }
 
         return $this->path;

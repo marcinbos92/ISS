@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Services\GeoCoder\GeoCoder;
+use App\Services\GeoCoder\GeoCoderInterface;
 use App\Services\IssLocator\IssLocator;
 use App\Services\IssLocator\IssLocatorInterface;
+use App\Services\Transformers\AbstractTransformer;
+use App\Services\Transformers\WebTransformer;
 use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use Illuminate\Contracts\Container\Container;
@@ -35,6 +39,18 @@ class IssServiceProvider extends ServiceProvider
 
             return $locator;
         });
+
         $this->app->singleton(ClientInterface::class, Client::class);
+        $this->app->singleton(AbstractTransformer::class, WebTransformer::class);
+
+        $this->app->singleton(GeoCoderInterface::class, function (Container $container) {
+            //Moved to this place for omitting cache config issues.
+            return new GeoCoder(
+                $container->get(ClientInterface::class),
+                'https://maps.googleapis.com/maps/api/geocode/json',
+                //it must be in env, generated ONLY for recruitment task
+                'AIzaSyBT6v_5Q5me-qxI27uN0nzZ-5aLIZd6jTk'
+            );
+        });
     }
 }

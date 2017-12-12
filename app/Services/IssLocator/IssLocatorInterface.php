@@ -6,6 +6,7 @@ namespace App\Services\IssLocator;
 
 
 use App\Services\IssLocator\Exceptions\NotDefinedLocatorPath;
+use App\Services\Response\ServiceResponseInteface;
 
 /**
  * Interface IssLocatorInterface
@@ -15,9 +16,9 @@ interface IssLocatorInterface
 {
     /**
      * @param int $satelliteId
-     * @return IssResponseInteface
+     * @return ServiceResponseInteface
      */
-    public function locate(int $satelliteId): IssResponseInteface;
+    public function locate(int $satelliteId): ServiceResponseInteface;
 
     /**
      * @return string

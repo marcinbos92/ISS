@@ -5,7 +5,7 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <title>Laravel</title>
+        <title>ISS Locator</title>
 
         <!-- Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Raleway:100,600" rel="stylesheet" type="text/css">
@@ -48,6 +48,9 @@
             .title {
                 font-size: 84px;
             }
+            .small-title {
+                font-size: 44px;
+            }
 
             .links > a {
                 color: #636b6f;
@@ -67,16 +70,15 @@
     <body>
         <div class="flex-center position-ref full-height">
             <div class="content">
+                <div class="small-title">
+                    ISS Location
+                </div>
                 <div class="title m-b-md">
-                    ISS Locator
+                    <i>
+                        "{{ $position_message }}"
+                    </i>
                 </div>
-                <div>
-                    <h6>by Marcin Boś</h6>
-                </div>
-
-                <div class="links">
-                    <a href="/locate">Click to locate International Space Station.</a>
-                </div>
+                {{ $latitude }} , {{ $longitude }}
             </div>
         </div>
     </body>

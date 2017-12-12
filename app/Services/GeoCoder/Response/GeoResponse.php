@@ -1,25 +1,24 @@
 <?php
 declare(strict_types=1);
 
-namespace App\Services\IssLocator;
+namespace App\Services\GeoCoder\Response;
 
+use App\Services\Response\ServiceResponseInteface;
 use Psr\Http\Message\ResponseInterface;
 
 /**
- * Class IssResponse
- * @package App\Services\IssLocator
+ * Class GeoResponse
+ * @package App\Services\GeoCoder
  */
-class IssResponse implements IssResponseInteface
+class GeoResponse implements ServiceResponseInteface
 {
-
     /**
      * @var ResponseInterface
      */
     private $response;
 
-
     /**
-     * IssResponse constructor.
+     * GeoResponse constructor.
      * @param ResponseInterface $response
      */
     public function __construct(ResponseInterface $response)
@@ -27,20 +26,23 @@ class IssResponse implements IssResponseInteface
         $this->response = $response;
     }
 
-
     /**
      * @return array
      */
     public function get(): array
     {
         [
-            'latitude' => $latitude,
-            'longitude' => $longitude,
+            'results' => $results,
         ] = json_decode($this->response->getBody()->getContents(), true);
 
+        if (empty($results)) {
+            return [
+              'message' => 'ISS is off-shore'
+            ];
+        }
+
         return [
-            'latitude' => $latitude,
-            'longitude' => $longitude,
+            'formatted_address' => strtoupper($results[0]['formatted_address']),
         ];
     }
 
