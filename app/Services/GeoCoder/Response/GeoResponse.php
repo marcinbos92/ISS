@@ -37,7 +37,7 @@ class GeoResponse implements ServiceResponseInteface
 
         if (empty($results)) {
             return [
-              'message' => 'ISS is off-shore'
+              'message' => 'ISS is offshore',
             ];
         }
 

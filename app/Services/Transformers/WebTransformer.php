@@ -29,6 +29,7 @@ class WebTransformer extends AbstractTransformer
      */
     private function getArray(): array
     {
+        $this->checkData();
 
         [
             'coordinates' => $coordinates,
@@ -42,4 +43,25 @@ class WebTransformer extends AbstractTransformer
         ];
     }
 
+    /**
+     * @throws \InvalidArgumentException
+     */
+    private function checkData(): void
+    {
+        if (!array_key_exists('coordinates', $this->data)) {
+            throw new \InvalidArgumentException('Data array should contain coordinates key');
+        }
+
+        if (!array_key_exists('address', $this->data)) {
+            throw new \InvalidArgumentException('Data array should contain address key');
+        }
+
+        if (!array_key_exists('latitude', $this->data['coordinates'])) {
+            throw new \InvalidArgumentException('Data array should contain coordinates.latitude key');
+        }
+
+        if (!array_key_exists('longitude', $this->data['coordinates'])) {
+            throw new \InvalidArgumentException('Data array should contain coordinates.longitude key');
+        }
+    }
 }
